@@ -20,7 +20,10 @@ const bookingSchema = {
         required: true,
     }
 }
-
-export default class BookingController {
     
+export default class BookingController {
+    static async createBoking(req, res) {
+        const {customer, vendor, task, price, time} = req.body;
+        
+    }
 }

@@ -1,4 +1,4 @@
-import { createUser, getUserByEmail } from '../utils/db';
+import { createUser, getUserByEmail } from '../db/user';
 
 const userSchema = {
   id: {
@@ -36,12 +36,12 @@ export default class UserController {
     const { email, password } = req.body;
     const user = getUserByEmail(email);
     if (!user) {
-      return res.status(404).send("Incorrect email");
+      return res.status(404).json({error: "Incorrect email"});
     }
     if (compareHash(password, user.password)) {
-      return res.status(200).send("Login successful");
+      return res.status(200).json({message: "Login successful"});
     } else {
-      return res.status(401).send("Incorrect password");
+      return res.status(401).json({error: "Incorrect password"});
     }
   }
   static async logout(req, res) {
@@ -51,7 +51,7 @@ export default class UserController {
     const { name, email, password, avatar } = req.body;
     const user = getUserByEmail(email);
     if (user) {
-      return res.status(409).send("User already exists");
+      return res.status(409).json({error: "User already exists"});
     }
     const hashedPassword = generateHash(password);
     createUser(email, hashedPassword, name, avatar);
