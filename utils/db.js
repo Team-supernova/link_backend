@@ -9,10 +9,11 @@ export const getUserByEmail = async (email) => {
   });
 }
 
-export const createUser = async (email, password) => {
-  connection.query("INSERT INTO users (email, password) VALUES (?, ?)", [email, password], (err) => {
+export const createUser = async (email, password, name, avatar ) => {
+  const createdAt = new Date().toLocaleDateString("en-US" );
+  connection.query("INSERT INTO users (name, email, password, avatar, createdAt) VALUES (?, ?)", [name, email, password, avatar, createdAt], (err) => {
     if (err) {
-      return res.status(500).send("Internal server error");
+      return res.status(500).send("Internal server error, could not create user");
     }
     return res.status(201).send("User created");
   });
