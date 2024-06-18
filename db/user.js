@@ -1,5 +1,5 @@
 import connection from ".";
-import { generateID } from "../utils";
+import { generateHash, generateID } from "../utils";
 
 export const getUserByEmail = async (email) => {
   connection.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
@@ -23,6 +23,16 @@ export const createUser = async (name, email, password, avatar, role) => {
 
 export const getUserByID = async (id) => {
   connection.query("SELECT * FROM users WHERE id = ?", [id], (err, results) => {
+    if (err) {
+      throw err;
+    }
+    return results[0];
+  });
+}
+
+export const forgotPassword = async (email, newPassword) => {
+  const password = generateHash(newPassword)
+  connection.query("UPDATE users set password = ? WHERE email = ?", [password, email], (err, results) => {
     if (err) {
       throw err;
     }

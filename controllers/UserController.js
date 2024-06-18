@@ -21,8 +21,28 @@ const userSchema = {
     type: String,
     required: true
   },
+  phone: {
+    type: String,
+    required: true
+  },
   role: {
     type: "customer" | "vendor",
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  state: {
+    type: String,
+    required: true
+  },
+  zip: {
+    type: String,
     required: true
   },
   createdAt: {
@@ -48,12 +68,12 @@ export default class UserController {
     return res.status(200).send("Logout successful");
   }
   static async register(req, res) {
-    const { name, email, password, avatar } = req.body;
+    const { name, email, password, avatar, address, city, state, zip } = req.body;
     const user = getUserByEmail(email);
     if (user) {
       return res.status(409).json({error: "User already exists"});
     }
     const hashedPassword = generateHash(password);
-    createUser(email, hashedPassword, name, avatar);
+    createUser(name, email, hashedPassword, avatar, address, city, state, zip);
   }
 }

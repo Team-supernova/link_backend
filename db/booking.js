@@ -13,19 +13,28 @@ export const getBookingByID = async (id) => {
 export const createBooking = async (customer, vendor, agreedPayment, agreedDate) => {
   const id = generateID();
   const createdAt = new Date().toLocaleString();
-  connection.query("INSERT INTO users (id, customer, vendor, agreedPayment, agreedDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)", [id, customer, vendor, agreedPayment, agreedDate, createdAt], (err) => {
-    if (err) {
-      return res.status(500).send("Internal server error");
-    }
-    return res.status(201).send("User created");
-  });
-}
-
-export const getUserByID = async (id) => {
-  connection.query("SELECT * FROM users WHERE id = ?", [id], (err, results) => {
+  connection.query("INSERT INTO users (id, customer, vendor, agreedPayment, agreedDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)", [id, customer, vendor, agreedPayment, agreedDate, createdAt], (err, result) => {
     if (err) {
       throw err;
     }
-    return results[0];
+    return result;
+  });
+}
+
+export const markCompleted = async (id) => {
+  connection.query(`UPDATE bookings SET completed = ${true} WHERE id = ${id}`, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    return result;
+  })
+}
+
+export const getBookingsByUserID = async (id) => {
+  connection.query("SELECT * FROM bookings WHERE customer = ? OR vendor = ?", [id, id], (err, results) => {
+    if (err) {
+      throw err;
+    }
+    return results;
   });
 }
