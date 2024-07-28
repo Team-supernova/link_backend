@@ -1,8 +1,8 @@
 import { Router } from "express";
-import ProfileController from "../controllers/ProfileController.js";
+import {vendorProfileController} from "../controllers/ProfileController.js";
 import { verifyUser } from "../utils/index.js";
 
 const profileRouter = Router();
 
-profileRouter.use("/", verifyUser, ProfileController);
+profileRouter.get("/vendor", verifyUser, vendorProfileController.getvendorProfile);
 export default profileRouter;

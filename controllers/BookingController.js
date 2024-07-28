@@ -1,39 +1,4 @@
-const bookingSchema = {
-    id: {
-        type: String,
-        required: true
-    },
-    costumer: {
-        type: "User",
-        required: true,
-    },
-    vendor: {
-        type: "User",
-        required: true,
-    },
-    task: {
-        type: String,
-        required: true,
-    },
-    timeCreated: {
-        type: String,
-        required: true,
-    },
-    agreedPayment: {
-        type: Number,
-        required: true,
-    },
-    agreedTime: {
-        type: String,
-        required: true,
-    },
-    completed: {
-        type: Boolean,
-        default: false,
-        required: true,
-    }
-}
-    
+
 export default class BookingController {
     static async createBoking(req, res) {
         const {customer, vendor, task, price, time} = req.body;

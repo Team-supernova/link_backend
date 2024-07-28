@@ -1,5 +1,5 @@
-import connection from ".";
-import { generateHash, generateID } from "../utils";
+import connection from "./db.js";
+import { generateHash, generateID } from "../utils/index.js";
 
 export const getUserByEmail = async (email) => {
   connection.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {

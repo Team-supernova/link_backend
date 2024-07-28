@@ -1,42 +1,7 @@
-import { getBookingsByUserID } from "../db/booking";
-import { getUserByID } from "../db/user";
+import { getBookingsByUserID } from "../db/booking.js";
+import { getUserByID } from "../db/user.js";
 
-const vendorProfileSchema = {
-    id: {
-        type: String,
-        required: true
-    },
-    user_id: {
-        type: String,
-        ref: 'User',
-        required: true
-    },
-    service: {
-        type: String,
-        required: true
-    },
-    bio: {
-        type: String,
-        required: true
-    },
-    location: {
-        type: String,
-        required: true
-    },
-    website: {
-        type: String,
-        required: true
-    },
-    portfolio1: {
-        type: String,
-    },
-    portfolio2: {
-        type: String,
-    },
-    portfolio3: {
-        type: String,
-    }
-}
+
 
 export class vendorProfileController {
     static async createVendorProfile (req, res) {

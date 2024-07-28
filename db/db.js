@@ -1,13 +1,13 @@
 // connect to mysql
-import { createConnection } from "mysql";
+import { createConnection } from "mysql2";
 import { config } from "dotenv";
 
 config();
 
 const dev_connect = {
   host: "localhost",
-  user: "supernova_dev",
-  password: "supernova_dev_pwd",
+  user: "root",
+  password: "root",
   port: "3306",
   database: process.env.DB_NAME,
 }

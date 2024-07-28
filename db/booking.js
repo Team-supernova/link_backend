@@ -1,5 +1,5 @@
-import connection from ".";
-import { generateID } from "../utils";
+import connection from "./db.js";
+import { generateID } from "../utils/index.js";
 
 export const getBookingByID = async (id) => {
   connection.query("SELECT * FROM bookings WHERE id = ?", [id], (err, results) => {
@@ -10,10 +10,10 @@ export const getBookingByID = async (id) => {
   });
 }
 
-export const createBooking = async (customer, vendor, agreedPayment, agreedDate) => {
+export const createBooking = async (customer_id, vendor_id, agreedPayment, agreedDate) => {
   const id = generateID();
   const createdAt = new Date().toLocaleString();
-  connection.query("INSERT INTO users (id, customer, vendor, agreedPayment, agreedDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)", [id, customer, vendor, agreedPayment, agreedDate, createdAt], (err, result) => {
+  connection.query("INSERT INTO users (id, customer_id, vendor_id, agreedPayment, agreedDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)", [id, customer, vendor, agreedPayment, agreedDate, createdAt], (err, result) => {
     if (err) {
       throw err;
     }
@@ -31,7 +31,7 @@ export const markCompleted = async (id) => {
 }
 
 export const getBookingsByUserID = async (id) => {
-  connection.query("SELECT * FROM bookings WHERE customer = ? OR vendor = ?", [id, id], (err, results) => {
+  connection.query("SELECT * FROM bookings WHERE customer_id = ? OR vendor_id = ?", [id, id], (err, results) => {
     if (err) {
       throw err;
     }

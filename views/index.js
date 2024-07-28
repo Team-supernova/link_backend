@@ -1,11 +1,11 @@
 import { Router } from "express";
-import authRouter from "./auth";
-import bookingRouter from "./booking";
-import chatRouter from "./chat";
-import paymentRouter from "./payment";
-import profileRouter from "./profile";
-const router = Router();
+import authRouter from "./auth.js";
+import bookingRouter from "./booking.js";
+import paymentRouter from "./payment.js";
+import profileRouter from "./profile.js";
+import chatRouter from "./chat.js";
 
+const router = Router();
 
 router.use('/auth', authRouter);
 router.use('/booking', bookingRouter);
