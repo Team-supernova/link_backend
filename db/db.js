@@ -1,33 +1,56 @@
 // connect to mysql
-import { createConnection } from "mysql2";
+import pg from "pg";
 import { config } from "dotenv";
 
 config();
 
-const dev_connect = {
-  host: "localhost",
-  user: "root",
-  password: "root",
-  port: "3306",
-  database: process.env.DB_NAME,
+const { Client } = pg;
+
+const connection_config = {
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  host: process.env.NODE_ENV === "production" ? process.env.PROD_PGHOST : process.env.DEV_PGHOST,
+  port: process.env.PGPORT,
+  database: process.env.PGDATABASE,
+  connectionString: process.env.NODE_ENV === "production" ? process.env.PROD_PGURL : process.env.DRV_PGURL,
+  ssl: {
+    rejectUnauthorized: false
+  },
 }
 
-const prod_connect = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-}
+const connection = new Client(connection_config);
+await connection.connect();
 
-const connection_config = process.env.NODE_ENV === "production" ? prod_connect : dev_connect;
-
-const connection = createConnection(connection_config)
-connection.connect((err) => {
-  if (err) {
-    console.error("error connecting: " + err.stack)
-    return
-  }
-  console.log("connected as id " + connection.threadId)
+connection.on('error', (err) => {
+  console.error('something bad has happened!', err.stack)
 })
+
+try {
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS chats (
+      id VARCHAR(255) NOT NULL PRIMARY KEY,
+      message TEXT NOT NULL,
+      imageURI VARCHAR(255),
+      sender VARCHAR(255) NOT NULL,
+      receiver VARCHAR(255) NOT NULL,
+      room VARCHAR(255) NOT NULL,
+      timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log("Successfully created chats table");
+
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS previews (
+      room_hash VARCHAR(255) NOT NULL PRIMARY KEY,
+      user1 VARCHAR(255) NOT NULL,
+      user2 VARCHAR(255) NOT NULL,
+      room VARCHAR(255) NOT NULL
+    )
+  `);
+  console.log("Successfully created previews table");
+} catch (err) {
+  console.error("Could not create tables");
+  console.error("Error: " + err.stack);
+}
+
 export default connection;

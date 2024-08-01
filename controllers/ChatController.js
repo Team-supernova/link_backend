@@ -1,5 +1,5 @@
 import { deleteChat, getChats, storeChat, editChat as updateChat } from '../db/chat.js';
-import { combineUserAndGetRoom, createPreview, getUserPreviews } from '../db/preview.js';
+import { combineUserAndGetRoom, createPreview, getAllRoom, getUserPreviews } from '../db/preview.js';
 import { generateID } from '../utils/index.js';
 
 /**
@@ -26,6 +26,15 @@ export default class ChatController {
         try {
             const msg = await storeChat(id, sender, receiver, message, imageURI, room);
             return msg;
+        } catch (error) {
+            return {message: "Could not get chat", reason: error};
+        }
+    }
+    static async makeChat(req, res) {
+        const { id, sender, receiver, message, imageURI, room } = req.body;
+        try {
+            const msg = await storeChat(id, sender, receiver, message, imageURI, room);
+            return res.status(201).json({message: msg});
         } catch (error) {
             return {message: "Could not get chat", reason: error};
         }
@@ -83,6 +92,15 @@ export default class ChatController {
         const { user } = req.body;
         try {
             const previews = await getUserPreviews(user);
+            return res.status(200).json({previews});
+        } catch (error) {
+            res.status(500).json({message: "Could not get previews", reason: error});
+        }
+    }
+    static async getAllPreviews(req, res) {
+        const { user } = req.body;
+        try {
+            const previews = await getAllRoom();
             return res.status(200).json({previews});
         } catch (error) {
             res.status(500).json({message: "Could not get previews", reason: error});

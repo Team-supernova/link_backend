@@ -7,11 +7,21 @@ import { generateRoomHash } from "../utils/index.js";
  */
 export const getRoom = async (room_id) => {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT room FROM previews WHERE room_hash = ?', [room_id], (err, results) => {
+        connection.query('SELECT room FROM previews WHERE room_hash = $1', [room_id], (err, results) => {
             if (err) {
                 return reject(err);
             }
-            resolve(results[0]);
+            resolve(results.rows[0]);
+        });
+    });
+}
+export const getAllRoom = async () => {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM previews', (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results.rows);
         });
     });
 }
@@ -23,15 +33,15 @@ export const combineUserAndGetRoom = async (user1, user2) => {
     return new Promise((resolve, reject) => {
         // Combine both queries into a single query using OR condition
         connection.query(
-            'SELECT * FROM previews WHERE room_hash = ? OR room_hash = ?',
+            'SELECT * FROM previews WHERE room_hash = $1 OR room_hash = $2',
             [hash1, hash2],
             (err, results) => {
                 if (err) {
                     console.error("Error querying database:", err);
                     return reject(err);
                 }
-                if (results.length > 0) {
-                    return resolve(results[0].room);
+                if (results.rowCount > 0) {
+                    return resolve(results.rows[0].room);
                 } else return resolve(null);
         });
     });
@@ -43,12 +53,12 @@ export const combineUserAndGetRoom = async (user1, user2) => {
  */
 export const getUserPreviews = async (sender) => {
     return new Promise((resolve, reject) => {
-        connection.query("SELECT * FROM previews WHERE user1 = ? OR user2 = ?", [sender, sender], (err, results) => {
+        connection.query("SELECT * FROM previews WHERE user1 = $1 OR user2 = $1", [sender], (err, results) => {
         if (err) {
             console.error("Error querying database:", err);
             reject(err);
         }
-        return resolve(results);
+        return resolve(results.rows);
     });
     })
     
@@ -64,18 +74,15 @@ export const createPreview = async (user1, user2, room) => {
     if (!user1 || !user2 || !room) {
         throw new Error("Invalid input: user1, user2, and room must be defined");
     }
-    // const res = combineUserAndGetRoom(user1, user2);
-    // if (res) return;
-
     const room_id = generateRoomHash(user1, user2);
     return new Promise((resolve, reject) => {
         connection.query(
-            "INSERT INTO previews (user1, user2, room, room_hash) VALUES (?, ?, ?, ?)",
+            "INSERT INTO previews (user1, user2, room, room_hash) VALUES ($1, $2, $3, $4)",
             [user1, user2, room, room_id],
             (err) => {
                 if (err) {
                     console.error("Error inserting into database:", err);
-                    return reject(err);
+                    return reject(err.stack);
                 }
                 resolve();
             }
